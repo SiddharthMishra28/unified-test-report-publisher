@@ -1,0 +1,7 @@
+com.example.normalizer.parser.impl.CucumberJsonParser
+com.example.normalizer.parser.impl.JUnitXmlParser
+com.example.normalizer.parser.impl.TestNGXmlParser
+com.example.normalizer.parser.impl.MochaJsonParser
+com.example.normalizer.parser.impl.PytestJsonParser
+com.example.normalizer.parser.impl.SerenityJsonParser
+com.example.normalizer.parser.impl.AllureJsonParser
