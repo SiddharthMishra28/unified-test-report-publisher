@@ -1,0 +1,15 @@
+<testng-results skipped="1" failed="1" total="3" passed="1">
+  <suite name="EndToEndSuite" duration-ms="5432">
+    <test name="UserLoginTests">
+      <class name="com.example.LoginTests">
+        <test-method name="testValidLogin" status="PASS" duration-ms="1200"/>
+        <test-method name="testInvalidLogin" status="FAIL" duration-ms="1500">
+          <exception class="AssertionError">
+            <message><![CDATA[Expected login to fail with invalid credentials]]></message>
+          </exception>
+        </test-method>
+        <test-method name="testForgotPassword" status="SKIP" duration-ms="500"/>
+      </class>
+    </test>
+  </suite>
+</testng-results>
