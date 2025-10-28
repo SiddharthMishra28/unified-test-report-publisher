@@ -1,3 +1,9 @@
-<?xml version="1.0" encoding="UTF-8"?>
-<testsuite name="MySuite" tests="0" failures="0" errors="0" skipped="0" time="0.0">
+<testsuite name="MySuite" tests="3" failures="1" skipped="1" time="5.123">
+    <testcase classname="MyClass" name="testOne" time="1.234"/>
+    <testcase classname="MyClass" name="testTwo" time="2.345">
+        <failure message="Assertion failed">expected true but found false</failure>
+    </testcase>
+    <testcase classname="MyClass" name="testThree" time="1.544">
+        <skipped/>
+    </testcase>
 </testsuite>
