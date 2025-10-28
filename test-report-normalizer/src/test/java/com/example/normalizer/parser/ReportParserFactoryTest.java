@@ -9,14 +9,14 @@ public class ReportParserFactoryTest {
 
     @Test
     public void testFactoryDetectsCucumberParser() throws Exception {
-        File fakeReport = new File("cucumber-results.json");
+        File fakeReport = new File("src/test/resources/cucumber-results.json");
         NormalizedReport report = ReportParserFactory.parse(fakeReport);
         assertEquals("Cucumber", report.getFramework());
     }
 
     @Test
     public void testFactoryDetectsJUnitParser() throws Exception {
-        File fakeReport = new File("TEST-MySuite.xml");
+        File fakeReport = new File("src/test/resources/TEST-MySuite.xml");
         NormalizedReport report = ReportParserFactory.parse(fakeReport);
         assertEquals("JUnit", report.getFramework());
     }
