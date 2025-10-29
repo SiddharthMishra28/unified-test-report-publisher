@@ -1,13 +1,17 @@
 package com.example.normalizer.cli;
 
 import com.example.normalizer.model.NormalizedReport;
+import com.fasterxml.jackson.annotation.JsonFormat;
 import java.time.Instant;
 import java.util.*;
 
 public class NormalizedReportBundle {
     private String bundleId = UUID.randomUUID().toString();
     private String schemaVersion = "1.0";
+
+    @JsonFormat(shape = JsonFormat.Shape.STRING)
     private Instant createdAt = Instant.now();
+
     private Map<String, String> metadata = new LinkedHashMap<>();
     private List<NormalizedReport> reports = new ArrayList<>();
 

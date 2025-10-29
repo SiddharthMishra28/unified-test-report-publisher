@@ -1,6 +1,6 @@
 package com.example.normalizer.uploader;
 
-import com.example.normalizer.model.NormalizedReport;
+import com.example.normalizer.cli.NormalizedReportBundle;
 import com.sun.net.httpserver.HttpExchange;
 import com.sun.net.httpserver.HttpHandler;
 import com.sun.net.httpserver.HttpServer;
@@ -42,10 +42,10 @@ public class UploadClientTest {
         config.setUsername("user");
         config.setPassword("pass");
 
-        NormalizedReport report = new NormalizedReport();
-        report.setFramework("Test");
+        UploadClient client = new UploadClient(config);
+        NormalizedReportBundle bundle = new NormalizedReportBundle();
 
-        boolean success = UploadClient.upload(report, config);
+        boolean success = client.upload(bundle);
         assertTrue(success);
         assertEquals("Basic dXNlcjpwYXNz", handler.authHeader);
     }
@@ -57,10 +57,10 @@ public class UploadClientTest {
         config.setAuthType(UploadConfig.AuthType.BEARER);
         config.setToken("my-token");
 
-        NormalizedReport report = new NormalizedReport();
-        report.setFramework("Test");
+        UploadClient client = new UploadClient(config);
+        NormalizedReportBundle bundle = new NormalizedReportBundle();
 
-        boolean success = UploadClient.upload(report, config);
+        boolean success = client.upload(bundle);
         assertTrue(success);
         assertEquals("Bearer my-token", handler.authHeader);
     }

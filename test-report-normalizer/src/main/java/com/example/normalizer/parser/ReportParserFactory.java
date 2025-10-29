@@ -16,6 +16,14 @@ public class ReportParserFactory {
         return list;
     }
 
+    public static void loadExternal(File pluginDir) {
+        List<ReportParser> externals = com.example.normalizer.plugin.PluginLoader.loadExternalPlugins(pluginDir);
+        if (!externals.isEmpty()) {
+            PARSERS.addAll(externals);
+            System.out.println("🔌 Merged " + externals.size() + " external parsers into registry.");
+        }
+    }
+
     public static NormalizedReport parse(File file) throws IOException {
         for (ReportParser parser : PARSERS) {
             if (parser.canParse(file)) {

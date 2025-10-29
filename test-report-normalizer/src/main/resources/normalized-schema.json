@@ -1,0 +1,46 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "title": "Normalized Test Report Bundle",
+  "type": "object",
+  "required": ["bundleId", "schemaVersion", "createdAt", "reports"],
+  "properties": {
+    "bundleId": { "type": "string", "format": "uuid" },
+    "schemaVersion": { "type": "string" },
+    "createdAt": { "type": "string", "format": "date-time" },
+    "metadata": { "type": "object" },
+    "reports": {
+      "type": "array",
+      "items": {
+        "type": "object",
+        "required": ["framework", "suites"],
+        "properties": {
+          "framework": { "type": "string" },
+          "suites": {
+            "type": "array",
+            "items": {
+              "type": "object",
+              "required": ["name", "tests"],
+              "properties": {
+                "name": { "type": "string" },
+                "durationMs": { "type": "integer" },
+                "tests": {
+                  "type": "array",
+                  "items": {
+                    "type": "object",
+                    "required": ["name", "status", "durationMs"],
+                    "properties": {
+                      "name": { "type": "string" },
+                      "status": { "type": "string" },
+                      "durationMs": { "type": "integer" },
+                      "errorMessage": { "type": ["string", "null"] }
+                    }
+                  }
+                }
+              }
+            }
+          }
+        }
+      }
+    }
+  }
+}

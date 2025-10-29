@@ -5,6 +5,8 @@ import com.example.normalizer.config.NormalizerConfig;
 import com.example.normalizer.model.NormalizedReport;
 import com.example.normalizer.parser.ReportParserFactory;
 import com.example.normalizer.uploader.UploadClient;
+import com.example.normalizer.validation.SchemaValidator;
+import com.fasterxml.jackson.databind.JsonNode;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.fasterxml.jackson.datatype.jsr310.JavaTimeModule;
 
@@ -17,6 +19,8 @@ import java.util.stream.Collectors;
 
 public class NormalizerCli {
     public static void main(String[] args) throws Exception {
+        ReportParserFactory.loadExternal(new File("./plugins"));
+
         if (args.length == 1 && args[0].equals("--list-plugins")) {
             System.out.println("Discovered Parser Plugins:");
             ReportParserFactory.listPlugins().forEach(p ->
@@ -74,9 +78,17 @@ public class NormalizerCli {
         mapper.writerWithDefaultPrettyPrinter().writeValue(outputFile, bundle);
         System.out.println("Aggregated and normalized report bundle written to: " + outputFile.getAbsolutePath());
 
+        JsonNode jsonNode = mapper.readTree(outputFile);
+        boolean isValid = SchemaValidator.validate(jsonNode);
+        if (!isValid) {
+            throw new RuntimeException("Normalized JSON failed schema validation!");
+        }
+        System.out.println("✅ Schema validation passed!");
+
         if (config.getUpload() != null && config.getUpload().getEndpoint() != null) {
             System.out.println("Uploading normalized bundle to " + config.getUpload().getEndpoint());
-            boolean success = UploadClient.upload(bundle, config.getUpload());
+            UploadClient client = new UploadClient(config.getUpload());
+            boolean success = client.upload(bundle);
             if (!success) {
                 System.err.println("Upload failed. Exiting with error.");
                 System.exit(6);
