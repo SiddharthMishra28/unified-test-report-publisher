@@ -32,7 +32,19 @@
                       "name": { "type": "string" },
                       "status": { "type": "string" },
                       "durationMs": { "type": "integer" },
-                      "errorMessage": { "type": ["string", "null"] }
+                      "errorMessage": { "type": ["string", "null"] },
+                      "steps": {
+                        "type": "array",
+                        "items": {
+                          "type": "object",
+                          "required": ["name", "status", "durationMs"],
+                          "properties": {
+                            "name": { "type": "string" },
+                            "status": { "type": "string" },
+                            "durationMs": { "type": "integer" }
+                          }
+                        }
+                      }
                     }
                   }
                 }
