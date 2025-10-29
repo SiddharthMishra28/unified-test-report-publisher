@@ -1,0 +1,79 @@
+{
+  "stats": {
+    "suites": 2,
+    "tests": 3,
+    "passes": 2,
+    "pending": 0,
+    "failures": 1,
+    "start": "2025-10-29T09:00:00.000Z",
+    "end": "2025-10-29T09:00:05.000Z",
+    "duration": 5000
+  },
+  "results": [
+    {
+      "title": "My First Suite",
+      "suites": [
+        {
+          "title": "My Nested Suite",
+          "tests": [
+            {
+              "title": "A passing test",
+              "fullTitle": "My First Suite My Nested Suite A passing test",
+              "timedOut": false,
+              "duration": 1500,
+              "state": "passed",
+              "pass": true,
+              "fail": false,
+              "pending": false,
+              "code": "assert(true);",
+              "err": {}
+            },
+            {
+              "title": "A failing test",
+              "fullTitle": "My First Suite My Nested Suite A failing test",
+              "timedOut": false,
+              "duration": 500,
+              "state": "failed",
+              "pass": false,
+              "fail": true,
+              "pending": false,
+              "code": "assert.fail();",
+              "err": {
+                "message": "AssertionError: assert.fail()",
+                "stack": "AssertionError: assert.fail()\\n    at Context.<anonymous> (test.js:10:12)"
+              }
+            }
+          ],
+          "passes": [],
+          "failures": [],
+          "pending": [],
+          "skipped": [],
+          "duration": 2000,
+          "root": false,
+          "uuid": "a1b2c3d4-e5f6-7890-1234-567890abcdef"
+        }
+      ],
+      "tests": [
+        {
+          "title": "A top-level passing test",
+          "fullTitle": "My First Suite A top-level passing test",
+          "timedOut": false,
+          "duration": 1000,
+          "state": "passed",
+          "pass": true,
+          "fail": false,
+          "pending": false,
+          "code": "assert(true);",
+          "err": {}
+        }
+      ],
+      "passes": [],
+      "failures": [],
+      "pending": [],
+      "skipped": [],
+      "duration": 3000,
+      "root": true,
+      "uuid": "f1e2d3c4-b5a6-9876-5432-10fedcba9876"
+    }
+  ]
+}

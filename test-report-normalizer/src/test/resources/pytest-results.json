@@ -1,0 +1,64 @@
+{
+  "created": 1678886400.0,
+  "duration": 0.03,
+  "exitcode": 1,
+  "root": "/path/to/project",
+  "environment": {},
+  "summary": {
+    "total": 3,
+    "passed": 1,
+    "failed": 1,
+    "skipped": 1,
+    "total_duration": 0.03
+  },
+  "tests": [
+    {
+      "nodeid": "test_app.py::test_success",
+      "lineno": 5,
+      "outcome": "passed",
+      "keywords": ["test_success"],
+      "setup": {
+        "duration": 0.01,
+        "outcome": "passed"
+      },
+      "call": {
+        "duration": 0.01,
+        "outcome": "passed"
+      },
+      "teardown": {
+        "duration": 0.01,
+        "outcome": "passed"
+      }
+    },
+    {
+      "nodeid": "test_app.py::test_failure",
+      "lineno": 10,
+      "outcome": "failed",
+      "keywords": ["test_failure"],
+      "setup": {
+        "duration": 0.01,
+        "outcome": "passed"
+      },
+      "call": {
+        "duration": 0.01,
+        "outcome": "failed",
+        "longrepr": "AssertionError: assert False"
+      },
+      "teardown": {
+        "duration": 0.01,
+        "outcome": "passed"
+      }
+    },
+    {
+      "nodeid": "test_app.py::test_skipped",
+      "lineno": 15,
+      "outcome": "skipped",
+      "keywords": ["test_skipped"],
+      "setup": {
+        "duration": 0.01,
+        "outcome": "skipped",
+        "longrepr": "Skipped: unconditional skip"
+      }
+    }
+  ]
+}

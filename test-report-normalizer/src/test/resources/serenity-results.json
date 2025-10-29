@@ -1,0 +1,53 @@
+{
+  "name": "Login Feature",
+  "id": "login-feature",
+  "testSteps": [
+    {
+      "number": 1,
+      "description": "User logs in successfully",
+      "duration": 5000,
+      "startTime": "2025-10-29T09:00:00.000Z",
+      "result": "SUCCESS",
+      "children": [
+        {
+          "number": 2,
+          "description": "Given user is on the login page",
+          "duration": 1000,
+          "startTime": "2025-10-29T09:00:00.000Z",
+          "result": "SUCCESS"
+        },
+        {
+          "number": 3,
+          "description": "When user enters valid credentials",
+          "duration": 2000,
+          "startTime": "2025-10-29T09:00:01.000Z",
+          "result": "SUCCESS"
+        },
+        {
+          "number": 4,
+          "description": "Then user is redirected to the dashboard",
+          "duration": 2000,
+          "startTime": "2025-10-29T09:00:03.000Z",
+          "result": "SUCCESS"
+        }
+      ]
+    },
+    {
+      "number": 5,
+      "description": "User fails to log in with invalid credentials",
+      "duration": 3000,
+      "startTime": "2025-10-29T09:00:05.000Z",
+      "result": "FAILURE",
+      "exception": {
+        "errorType": "AssertionError",
+        "message": "Expected error message was not displayed"
+      }
+    }
+  ],
+  "driver": "chrome",
+  "testFailureCause": {
+    "errorType": "AssertionError",
+    "message": "Expected error message was not displayed"
+  },
+  "result": "FAILURE"
+}

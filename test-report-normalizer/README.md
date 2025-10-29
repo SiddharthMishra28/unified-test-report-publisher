@@ -4,8 +4,8 @@ A framework-agnostic Java library and command-line interface (CLI) for parsing, 
 
 ## Key Features
 
--   **Multi-Framework Support**: Out-of-the-box support for JUnit, TestNG, and Cucumber.
--   **Extensible Plugin Architecture**: Easily add new parsers for any framework (PyTest, Mocha, etc.) by dropping in a JAR. No core code changes needed.
+-   **Multi-Framework Support**: Out-of-the-box support for JUnit, TestNG, Cucumber, Mocha, Pytest, and Serenity.
+-   **Extensible Plugin Architecture**: Easily add new parsers for any other framework by dropping in a JAR. No core code changes needed.
 -   **Configuration Driven**: All settings are managed via a simple `normalizer-config.yaml` file, with support for environment variable substitution.
 -   **Rich Metadata**: Enriches normalized reports with a schema version, timestamps, and custom metadata (e.g., build ID, git commit).
 -   **JSON Schema Validation**: Ensures all generated output conforms to a strict, versioned JSON schema.
@@ -218,6 +218,92 @@ The next time you run the normalizer, it will automatically discover and use you
     </test>
   </suite>
 </testng-results>
+```
+
+### Sample Input: Mocha JSON (mochawesome format)
+
+```json
+{
+  "stats": {
+    "suites": 1,
+    "tests": 2,
+    "passes": 1,
+    "failures": 1,
+    "duration": 2000
+  },
+  "results": [
+    {
+      "title": "My Test Suite",
+      "tests": [
+        {
+          "title": "A passing test",
+          "duration": 1500,
+          "state": "passed"
+        },
+        {
+          "title": "A failing test",
+          "duration": 500,
+          "state": "failed",
+          "err": {
+            "message": "AssertionError: expected true to be false"
+          }
+        }
+      ]
+    }
+  ]
+}
+```
+
+### Sample Input: Pytest JSON (pytest-json-report format)
+
+```json
+{
+  "summary": {
+    "total": 3,
+    "passed": 1,
+    "failed": 1,
+    "skipped": 1
+  },
+  "tests": [
+    {
+      "nodeid": "test_app.py::test_success",
+      "outcome": "passed",
+      "call": { "duration": 0.01 }
+    },
+    {
+      "nodeid": "test_app.py::test_failure",
+      "outcome": "failed",
+      "call": { "duration": 0.01, "longrepr": "AssertionError: assert False" }
+    },
+    {
+      "nodeid": "test_app.py::test_skipped",
+      "outcome": "skipped"
+    }
+  ]
+}
+```
+
+### Sample Input: Serenity BDD JSON
+
+```json
+{
+  "name": "Login Feature",
+  "testSteps": [
+    {
+      "description": "User logs in successfully",
+      "duration": 5000,
+      "result": "SUCCESS"
+    },
+    {
+      "description": "User fails to log in",
+      "duration": 3000,
+      "result": "FAILURE",
+      "exception": {
+        "message": "Expected error message was not displayed"
+      }
+    }
+  ]
+}
 ```
 
 ### Final Normalized JSON Output
