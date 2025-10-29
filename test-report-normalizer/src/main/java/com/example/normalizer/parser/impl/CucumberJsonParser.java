@@ -79,4 +79,15 @@ public class CucumberJsonParser implements ReportParser {
 
         return report;
     }
+
+    @Override
+    public com.example.normalizer.plugin.ParserPluginMetadata getMetadata() {
+        com.example.normalizer.plugin.ParserPluginMetadata meta = new com.example.normalizer.plugin.ParserPluginMetadata();
+        meta.setFramework("Cucumber");
+        meta.setParserClass(this.getClass().getName());
+        meta.setSupportedExtensions(java.util.List.of(".json"));
+        meta.setVersion("1.0");
+        meta.setDescription("Parses Cucumber JSON report files.");
+        return meta;
+    }
 }

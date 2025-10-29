@@ -88,4 +88,15 @@ public class TestNGXmlParser implements ReportParser {
             default -> "UNKNOWN";
         };
     }
+
+    @Override
+    public com.example.normalizer.plugin.ParserPluginMetadata getMetadata() {
+        com.example.normalizer.plugin.ParserPluginMetadata meta = new com.example.normalizer.plugin.ParserPluginMetadata();
+        meta.setFramework("TestNG");
+        meta.setParserClass(this.getClass().getName());
+        meta.setSupportedExtensions(java.util.List.of(".xml"));
+        meta.setVersion("1.0");
+        meta.setDescription("Parses TestNG XML report files.");
+        return meta;
+    }
 }

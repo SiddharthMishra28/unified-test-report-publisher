@@ -1,0 +1,13 @@
+inputDir: ./reports
+outputFile: ./output/normalized.json
+
+upload:
+  endpoint: https://qa-dashboard.company.com/api/ingest
+  authType: BEARER
+  token: ${UPLOAD_TOKEN}
+
+metadata:
+  buildId: ${CI_PIPELINE_ID}
+  gitCommit: ${GIT_COMMIT_SHA}
+  environment: staging
+  project: "User Platform"

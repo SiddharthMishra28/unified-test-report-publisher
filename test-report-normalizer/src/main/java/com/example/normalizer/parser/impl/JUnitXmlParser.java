@@ -60,4 +60,15 @@ public class JUnitXmlParser implements ReportParser {
 
         return report;
     }
+
+    @Override
+    public com.example.normalizer.plugin.ParserPluginMetadata getMetadata() {
+        com.example.normalizer.plugin.ParserPluginMetadata meta = new com.example.normalizer.plugin.ParserPluginMetadata();
+        meta.setFramework("JUnit");
+        meta.setParserClass(this.getClass().getName());
+        meta.setSupportedExtensions(java.util.List.of(".xml"));
+        meta.setVersion("1.0");
+        meta.setDescription("Parses JUnit XML report files.");
+        return meta;
+    }
 }

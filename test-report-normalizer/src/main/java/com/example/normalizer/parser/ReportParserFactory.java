@@ -1,30 +1,35 @@
 package com.example.normalizer.parser;
 
 import com.example.normalizer.model.NormalizedReport;
+import com.example.normalizer.plugin.ParserPluginMetadata;
 import java.io.File;
 import java.io.IOException;
-import java.util.ServiceLoader;
+import java.util.*;
 
-/**
- * Factory class to automatically detect and use
- * the correct ReportParser implementation for a given file.
- */
 public class ReportParserFactory {
+    private static final List<ReportParser> PARSERS = loadParsers();
 
-    /**
-     * Parses the input file by dynamically detecting the correct parser.
-     * Uses Java ServiceLoader for pluggable extensibility.
-     */
-    public static NormalizedReport parse(File file) throws IOException {
+    private static List<ReportParser> loadParsers() {
         ServiceLoader<ReportParser> loader = ServiceLoader.load(ReportParser.class);
+        List<ReportParser> list = new ArrayList<>();
+        loader.forEach(list::add);
+        return list;
+    }
 
-        for (ReportParser parser : loader) {
+    public static NormalizedReport parse(File file) throws IOException {
+        for (ReportParser parser : PARSERS) {
             if (parser.canParse(file)) {
-                System.out.println("✅ Using parser: " + parser.getClass().getSimpleName());
                 return parser.parse(file);
             }
         }
+        throw new IOException("No compatible parser found for file: " + file.getName());
+    }
 
-        throw new UnsupportedOperationException("❌ Unsupported report type: " + file.getName());
+    public static List<ParserPluginMetadata> listPlugins() {
+        List<ParserPluginMetadata> list = new ArrayList<>();
+        for (ReportParser parser : PARSERS) {
+            list.add(parser.getMetadata());
+        }
+        return list;
     }
 }
