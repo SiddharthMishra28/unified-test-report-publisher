@@ -34,9 +34,11 @@ public class GitLabPublisher {
     public boolean publishReport(String filePath, String applicationName) {
         try {
             if (!isCiEnvironment) {
-                TelemetryLogger.log("Skipping publish: Not running in CI environment.");
+                TelemetryLogger.publisher("Skipping publish: Not running in CI environment.");
                 return false;
             }
+
+            TelemetryLogger.publisher("Starting GitLab upload for application: " + applicationName);
 
             String projectId = config.getGitlabProjectId();
             String token = config.getGitlabPersonalAccessToken();
@@ -59,6 +61,8 @@ public class GitLabPublisher {
             String base64Content = Base64.getEncoder().encodeToString(fileContent.getBytes(StandardCharsets.UTF_8));
 
             boolean fileExists = checkFileExists(baseUrl, token, encodedBranch);
+            TelemetryLogger.publisher("File exists check complete. Exists: " + fileExists);
+
 
             String payload = String.format("""
                 {
@@ -82,19 +86,18 @@ public class GitLabPublisher {
             HttpResponse<String> response = sendWithRetry(request, 2);
 
             if (response != null && (response.statusCode() == 201 || response.statusCode() == 200)) {
-                TelemetryLogger.logSuccess("GitLab publish", 0);
-                TelemetryLogger.log("✅ Successfully " + (fileExists ? "updated" : "created") + " report: " + targetPath);
+                TelemetryLogger.logSuccess("Successfully " + (fileExists ? "updated" : "created") + " report: " + targetPath);
                 return true;
             } else {
                 if (response != null) {
-                    TelemetryLogger.logFailure("GitLab publish", response.statusCode(), response.body());
+                    TelemetryLogger.logError("GitLab publish failed with status " + response.statusCode() + ": " + response.body());
                 } else {
-                    TelemetryLogger.logFailure("GitLab publish", 500, "Request failed after multiple retries");
+                    TelemetryLogger.logError("GitLab publish failed after multiple retries.");
                 }
                 return false;
             }
         } catch (IOException | InterruptedException e) {
-            TelemetryLogger.log("❌ Exception during GitLab publishing: " + e.getMessage());
+            TelemetryLogger.logError("Exception during GitLab publishing: " + e.getMessage());
             return false;
         }
     }
@@ -110,22 +113,23 @@ public class GitLabPublisher {
             HttpResponse<String> response = sendWithRetry(request, 2);
             return response != null && response.statusCode() == 200;
         } catch (Exception e) {
-            TelemetryLogger.log("⚠️ Could not verify file existence: " + e.getMessage());
+            TelemetryLogger.logWarning("Could not verify file existence: " + e.getMessage());
             return false;
         }
     }
 
     private HttpResponse<String> sendWithRetry(HttpRequest request, int maxRetries) throws IOException, InterruptedException {
         int attempts = 0;
+        HttpResponse<String> response = null;
         while (attempts < maxRetries) {
             attempts++;
-            HttpResponse<String> response = httpClient.send(request, HttpResponse.BodyHandlers.ofString());
+            response = httpClient.send(request, HttpResponse.BodyHandlers.ofString());
             if (response.statusCode() < 500) return response; // success or client error
-            TelemetryLogger.log("⚠️ Retry " + attempts + ": GitLab returned " + response.statusCode());
+            TelemetryLogger.logWarning("Retry " + attempts + ": GitLab returned " + response.statusCode());
             if (attempts < maxRetries) {
                 Thread.sleep(2000L * attempts);
             }
         }
-        return null;
+        return response;
     }
 }

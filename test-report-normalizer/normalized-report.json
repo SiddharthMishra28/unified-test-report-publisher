@@ -1,0 +1,77 @@
+{
+  "schemaVersion" : "1.0.0",
+  "bundleId" : "6ea4c79b-715a-4a3f-9c85-c98a5d2db707",
+  "createdAt" : "2025-10-30T11:58:23.631770650Z",
+  "metadata" : {
+    "runDate" : "2025-10-30T11:58:23.939381936Z",
+    "application" : "my-test-app",
+    "ciPipelineId" : null,
+    "gitlabProjectId" : "12345",
+    "runId" : "c4136e5c",
+    "published" : false,
+    "pipelineUrl" : null,
+    "commitHash" : null,
+    "gitBranch" : "main"
+  },
+  "reports" : [ {
+    "framework" : "Cucumber",
+    "runInfo" : null,
+    "summary" : {
+      "total" : 2,
+      "passed" : 1,
+      "failed" : 1,
+      "skipped" : 0,
+      "broken" : 0,
+      "passRate" : 50.0
+    },
+    "suites" : [ {
+      "name" : "User Login Feature",
+      "packageName" : null,
+      "durationMs" : 5000,
+      "tests" : [ {
+        "name" : "Valid login scenario",
+        "className" : null,
+        "status" : "PASSED",
+        "durationMs" : 3500,
+        "errorMessage" : null,
+        "stackTrace" : null,
+        "tags" : null,
+        "steps" : [ {
+          "name" : "Given user is on login page",
+          "status" : "PASSED",
+          "durationMs" : 1000,
+          "errorMessage" : null
+        }, {
+          "name" : "When user enters valid credentials",
+          "status" : "PASSED",
+          "durationMs" : 2000,
+          "errorMessage" : null
+        }, {
+          "name" : "Then user should see dashboard",
+          "status" : "PASSED",
+          "durationMs" : 500,
+          "errorMessage" : null
+        } ]
+      }, {
+        "name" : "Invalid login scenario",
+        "className" : null,
+        "status" : "FAILED",
+        "durationMs" : 1500,
+        "errorMessage" : null,
+        "stackTrace" : null,
+        "tags" : null,
+        "steps" : [ {
+          "name" : "Given user is on login page",
+          "status" : "PASSED",
+          "durationMs" : 1000,
+          "errorMessage" : null
+        }, {
+          "name" : "When user enters wrong password",
+          "status" : "FAILED",
+          "durationMs" : 500,
+          "errorMessage" : null
+        } ]
+      } ]
+    } ]
+  } ]
+}

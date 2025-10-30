@@ -1,6 +1,7 @@
 package com.example.normalizer.uploader;
 
-import com.example.normalizer.cli.NormalizedReportBundle;
+import com.example.normalizer.config.UploadConfig;
+import com.example.normalizer.model.NormalizedReportBundle;
 import com.sun.net.httpserver.HttpExchange;
 import com.sun.net.httpserver.HttpHandler;
 import com.sun.net.httpserver.HttpServer;
@@ -10,6 +11,8 @@ import org.junit.jupiter.api.Test;
 
 import java.io.IOException;
 import java.net.InetSocketAddress;
+import java.util.Collections;
+import java.util.Map;
 import java.util.concurrent.Executors;
 
 import static org.junit.jupiter.api.Assertions.assertTrue;
@@ -35,27 +38,11 @@ public class UploadClientTest {
     }
 
     @Test
-    public void testUploadWithBasicAuth() {
-        UploadConfig config = new UploadConfig();
-        config.setEndpoint("http://localhost:" + server.getAddress().getPort() + "/api/ingest");
-        config.setAuthType(UploadConfig.AuthType.BASIC);
-        config.setUsername("user");
-        config.setPassword("pass");
-
-        UploadClient client = new UploadClient(config);
-        NormalizedReportBundle bundle = new NormalizedReportBundle();
-
-        boolean success = client.upload(bundle);
-        assertTrue(success);
-        assertEquals("Basic dXNlcjpwYXNz", handler.authHeader);
-    }
-
-    @Test
     public void testUploadWithBearerToken() {
         UploadConfig config = new UploadConfig();
         config.setEndpoint("http://localhost:" + server.getAddress().getPort() + "/api/ingest");
-        config.setAuthType(UploadConfig.AuthType.BEARER);
-        config.setToken("my-token");
+        config.setAuth(Map.of("type", "bearer", "token", "my-token"));
+
 
         UploadClient client = new UploadClient(config);
         NormalizedReportBundle bundle = new NormalizedReportBundle();
@@ -63,6 +50,18 @@ public class UploadClientTest {
         boolean success = client.upload(bundle);
         assertTrue(success);
         assertEquals("Bearer my-token", handler.authHeader);
+    }
+
+    @Test
+    public void testUploadSuccess() {
+        UploadConfig config = new UploadConfig();
+        config.setEndpoint("http://localhost:" + server.getAddress().getPort() + "/api/ingest");
+
+        UploadClient client = new UploadClient(config);
+        NormalizedReportBundle bundle = new NormalizedReportBundle();
+
+        boolean success = client.upload(bundle);
+        assertTrue(success);
     }
 
     private static class TestHandler implements HttpHandler {
