@@ -1,359 +1,318 @@
 # Test Report Normalizer
 
-A framework-agnostic Java library and command-line interface (CLI) for parsing, normalizing, and uploading test execution reports from various frameworks into a unified JSON format.
+**A framework-agnostic test report normalization library for seamless CI/CD integration.**
 
-## Key Features
+Developed by: Siddharth Mishra <connectwithsiddharthm@gmail.com>
 
--   **Multi-Framework Support**: Out-of-the-box support for JUnit, TestNG, Cucumber, Mocha, Pytest, and Serenity.
--   **Extensible Plugin Architecture**: Easily add new parsers for any other framework by dropping in a JAR. No core code changes needed.
--   **Configuration Driven**: All settings are managed via a simple `normalizer-config.yaml` file, with support for environment variable substitution.
--   **Rich Metadata**: Enriches normalized reports with a schema version, timestamps, and custom metadata (e.g., build ID, git commit).
--   **JSON Schema Validation**: Ensures all generated output conforms to a strict, versioned JSON schema.
--   **Robust Uploader**: A built-in HTTP client uploads the final JSON bundle to any API endpoint, with support for various authentication methods and automatic retries.
--   **Standalone Executable**: The project is packaged as a single, executable JAR with all dependencies included.
+---
 
-## Getting Started
+## 📖 Table of Contents
+
+1.  [Introduction](#-introduction)
+2.  [Core Features](#-core-features)
+3.  [Getting Started](#-getting-started)
+    *   [Prerequisites](#prerequisites)
+    *   [Building the Library](#building-the-library)
+4.  [Command-Line Usage](#-command-line-usage)
+    *   [Running the Normalizer](#running-the-normalizer)
+    *   [Listing Available Plugins](#listing-available-plugins)
+5.  [Configuration](#-configuration)
+    *   [The `normalizer-config.yaml` File](#the-normalizer-configyaml-file)
+    *   [Configuration Parameters](#configuration-parameters)
+    *   [Sample Configuration](#sample-configuration)
+6.  [GitLab Integration](#-gitlab-integration)
+    *   [Overview](#overview)
+    *   [GitLab Setup](#gitlab-setup)
+    *   [CI/CD Environment Variables](#cicd-environment-variables)
+7.  [Supported Formats & Output Schema](#-supported-formats--output-schema)
+    *   [Supported Input Formats](#supported-input-formats)
+    *   [The Normalized JSON Schema](#the-normalized-json-schema)
+    *   [Sample JSON Output](#sample-json-output)
+8.  [Extending the Normalizer](#-extending-the-normalizer)
+    *   [Plugin Architecture](#plugin-architecture)
+    *   [Creating a Custom Parser](#creating-a-custom-parser)
+9.  [Logging & Telemetry](#-logging--telemetry)
+    *   [Log Modes](#log-modes)
+    *   [Environment Variables](#environment-variables)
+10. [License](#-license)
+
+---
+
+## 📜 Introduction
+
+The **Test Report Normalizer** is a powerful Java-based utility designed to solve a common problem in modern software development: the fragmentation of test report formats. Different testing frameworks (like JUnit, TestNG, Cucumber, Pytest, etc.) produce reports in various formats (XML, JSON, etc.), making it difficult to create a unified view of test results across a project.
+
+This library provides a solution by:
+
+1.  **Parsing** multiple report formats through an extensible plugin system.
+2.  **Normalizing** the parsed data into a single, consistent JSON schema.
+3.  **Publishing** the unified report to a central location, with first-class support for GitLab.
+
+It is designed to be run in any CI/CD pipeline, providing a single source of truth for your project's test quality.
+
+## ✨ Core Features
+
+*   **Framework-Agnostic:** Parses reports from a wide variety of testing frameworks.
+*   **Unified JSON Schema:** Converts all reports into a single, easy-to-understand JSON format.
+*   **Extensible Plugin System:** Easily add support for new report formats by creating custom parser plugins.
+*   **GitLab Integration:** Publishes normalized reports directly to a GitLab repository, with intelligent create/update logic.
+*   **CI/CD Aware:** Automatically enriches reports with metadata from your CI/CD environment (e.g., pipeline ID, commit hash).
+*   **Robust & Resilient:** Features include network retries, timeouts, and a local audit trail for publishing.
+*   **Configurable Logging:** Provides human-readable colored logs for local development and structured JSON logs for machine processing.
+
+## 🚀 Getting Started
 
 ### Prerequisites
 
--   Java 17 or higher
--   Apache Maven 3.6+
+*   **Java 17 JDK** (or newer)
+*   **Apache Maven** 3.6.0 (or newer)
 
-### Building from Source
+### Building the Library
 
-1.  **Clone the repository:**
-    ```bash
-    git clone https://github.com/SiddharthMishra28/unified-test-report-publisher.git
-    cd unified-test-report-publisher/test-report-normalizer
-    ```
+The project is packaged as a standalone, executable JAR file, which includes all necessary dependencies.
 
-2.  **Build the executable JAR:**
-    Run the Maven `package` command from the root of the `test-report-normalizer` directory.
-
-    ```bash
-    mvn package
-    ```
-
-    This will compile the code, run all tests, and create a standalone executable JAR file in the `target/` directory, named `test-report-normalizer-1.0.0.jar`.
-
-## Usage
-
-The application is run as an executable JAR and is configured via a YAML file.
-
-### 1. Create a Configuration File
-
-Create a `normalizer-config.yaml` file to define your settings.
-
-**Example `normalizer-config.yaml`:**
-
-```yaml
-# Directory containing your raw test report files (e.g., .xml, .json)
-inputDir: ./reports
-
-# Path where the final normalized JSON bundle will be saved
-outputFile: ./output/normalized.json
-
-# (Optional) Configuration for uploading the final bundle
-upload:
-  endpoint: https://qa-dashboard.company.com/api/ingest
-  authType: BEARER # Can be NONE, BASIC, BEARER, API_KEY, or CUSTOM_HEADER
-  token: ${UPLOAD_TOKEN} # Value will be substituted from the UPLOAD_TOKEN environment variable
-
-# (Optional) Custom metadata to include in the final report bundle
-metadata:
-  buildId: ${CI_PIPELINE_ID}
-  gitCommit: ${GIT_COMMIT_SHA}
-  environment: staging
-  project: "User Platform"
-```
-
-### 2. Run the CLI
-
-Execute the JAR from your terminal, passing the path to your configuration file.
+To build the JAR, run the following command from the root of the project:
 
 ```bash
-java -jar target/test-report-normalizer-1.0.0.jar --config normalizer-config.yaml
+mvn clean package
 ```
 
-The CLI will:
-1.  Scan the `inputDir` for all report files.
-2.  Parse each supported file into a normalized format.
-3.  Aggregate all results into a single JSON bundle.
-4.  Add the specified metadata.
-5.  Save the bundle to `outputFile`.
-6.  Validate the bundle against the JSON schema.
-7.  If configured, upload the bundle to the specified endpoint.
+This will produce a file named `test-report-normalizer-1.0.0.jar` in the `target/` directory.
+
+## 💻 Command-Line Usage
+
+The library is controlled via a simple command-line interface (CLI).
+
+### Running the Normalizer
+
+To run the normalization process, you need to provide a configuration file.
+
+```bash
+java -jar target/test-report-normalizer-1.0.0.jar --config /path/to/your/normalizer-config.yaml
+```
 
 ### Listing Available Plugins
 
-To see which parser plugins are currently available (both built-in and from the `plugins/` directory), run:
+To see a list of all built-in and custom parser plugins that the library has discovered, use the `--list-plugins` flag.
 
 ```bash
 java -jar target/test-report-normalizer-1.0.0.jar --list-plugins
 ```
 
-## Extending with New Parsers (Plugin Development)
-
-The normalizer is designed to be easily extended. You can add support for a new test framework by creating a simple Java project that implements the `ReportParser` interface.
-
-### Step 1: Create a New Maven Project
-
-Create a new Java project. Its `pom.xml` only needs a dependency on the `test-report-normalizer` library itself (once published) and any libraries required for parsing (e.g., a JSON or XML library).
-
-### Step 2: Implement the `ReportParser` Interface
-
-Create a class that implements `com.example.normalizer.parser.ReportParser`.
-
-**Example `MyFrameworkParser.java`:**
-
-```java
-package com.mycompany.parser;
-
-import com.example.normalizer.model.NormalizedReport;
-import com.example.normalizer.parser.ReportParser;
-import com.example.normalizer.plugin.ParserPluginMetadata;
-import java.io.File;
-import java.io.IOException;
-import java.util.List;
-
-public class MyFrameworkParser implements ReportParser {
-
-    @Override
-    public boolean canParse(File file) {
-        // Your logic to determine if this parser can handle the file
-        // e.g., check file name, extension, or content.
-        return file.getName().endsWith(".myframework.json");
-    }
-
-    @Override
-    public NormalizedReport parse(File file) throws IOException {
-        // Your parsing logic here.
-        // Read the file, extract the data, and populate a NormalizedReport object.
-        NormalizedReport report = new NormalizedReport();
-        report.setFramework("MyFramework");
-        // ... populate suites, test cases, etc. ...
-        return report;
-    }
-
-    @Override
-    public ParserPluginMetadata getMetadata() {
-        ParserPluginMetadata meta = new ParserPluginMetadata();
-        meta.setFramework("MyFramework");
-        meta.setParserClass(this.getClass().getName());
-        meta.setSupportedExtensions(List.of(".myframework.json"));
-        meta.setVersion("1.0");
-        meta.setDescription("Parses reports from MyFramework.");
-        return meta;
-    }
-}
-```
-
-### Step 3: Register the Parser with `ServiceLoader`
-
-Create a file in your plugin's resources directory at:
-`src/main/resources/META-INF/services/com.example.normalizer.parser.ReportParser`
-
-This file should contain the fully qualified name of your implementation class:
+This will produce output similar to the following:
 
 ```
-com.mycompany.parser.MyFrameworkParser
+Discovered Parser Plugins:
+ - [Cucumber] com.example.normalizer.parser.impl.CucumberJsonParser (supports .json)
+ - [JUnit] com.example.normalizer.parser.impl.JUnitXmlParser (supports .xml)
+ - [TestNG] com.example.normalizer.parser.impl.TestNGXmlParser (supports .xml)
+ ...
 ```
 
-### Step 4: Package and Deploy
+## ⚙️ Configuration
 
-Build your plugin project into a JAR file. Then, simply drop this JAR into a `plugins/` directory next to the main `test-report-normalizer.jar`.
+The behavior of the normalizer is controlled by a single YAML file.
 
-```
-/app
-  |- test-report-normalizer-1.0.0.jar
-  |- /plugins
-      |- my-framework-parser-1.0.jar
-```
+### The `normalizer-config.yaml` File
 
-The next time you run the normalizer, it will automatically discover and use your new parser.
+This file defines the input directory for your test reports, the output file for the normalized JSON, and the configuration for the GitLab publisher.
 
-## Sample Report Formats & Normalized Output
+### Configuration Parameters
 
-### Sample Input: Cucumber JSON
+| Parameter                   | Type    | Description                                                                                                                               |
+| --------------------------- | ------- | ----------------------------------------------------------------------------------------------------------------------------------------- |
+| `applicationName`           | String  | A unique name for your application. Used for metadata and in the GitLab upload path.                                                      |
+| `inputDir`                  | String  | The path to the directory containing your raw test report files. The tool will recursively scan this directory for reports.                 |
+| `outputFile`                | String  | The path where the final, normalized JSON report bundle will be saved.                                                                    |
+| `publishOnlyOnCI`           | Boolean | If `true`, the GitLab publishing step will only run if a CI environment is detected (i.e., `CI_PIPELINE_ID` is set). Defaults to `false`.    |
+| `metadata`                  | Map     | A map of custom key-value pairs to be added to the metadata section of the final report.                                                    |
+| `gitlab`                    | Object  | Configuration for the GitLab publisher. See the [GitLab Integration](#-gitlab-integration) section for details.                               |
+| `gitlab.gitlabProjectId`      | String  | The ID of your GitLab project.                                                                                                            |
+| `gitlab.gitlabPersonalAccessToken` | String  | A GitLab Personal Access Token with `api` scope. It is **highly recommended** to provide this via an environment variable.             |
+| `gitlab.repoBranch`           | String  | The branch to which the report should be published.                                                                                       |
+| `gitlab.gitlabUploadFolderPath` | String  | The destination path for the report in your GitLab repository. Supports dynamic placeholders.                                           |
 
-```json
-[
-  {
-    "name": "User Login Feature",
-    "elements": [
-      {
-        "name": "Valid login scenario",
-        "type": "scenario",
-        "steps": [
-          {"name": "Given user is on login page", "result": {"status": "passed", "duration": 1000000000}},
-          {"name": "When user enters valid credentials", "result": {"status": "passed", "duration": 2000000000}}
-        ]
-      }
-    ]
-  }
-]
-```
+### Sample Configuration
 
-### Sample Input: JUnit XML
+```yaml
+# normalizer-config.yaml
 
-```xml
-<testsuite name="MySuite" tests="2" failures="1" time="3.5">
-    <testcase classname="MyClass" name="testOne" time="1.2"/>
-    <testcase classname="MyClass" name="testTwo" time="2.3">
-        <failure message="Assertion failed"/>
-    </testcase>
-</testsuite>
-```
+applicationName: "my-microservice"
 
-### Sample Input: TestNG XML
+# Directories
+inputDir: "./build/reports/tests"
+outputFile: "./normalized-report.json"
 
-```xml
-<testng-results skipped="0" failed="1" total="2" passed="1">
-  <suite name="EndToEndSuite" duration-ms="3000">
-    <test name="UserLoginTests">
-      <class name="com.example.LoginTests">
-        <test-method name="testValidLogin" status="PASS" duration-ms="1200"/>
-        <test-method name="testInvalidLogin" status="FAIL" duration-ms="1800"/>
-      </class>
-    </test>
-  </suite>
-</testng-results>
+# CI/CD Settings
+publishOnlyOnCI: true
+
+# Custom metadata to be added to the final report
+metadata:
+  team: "backend-squad"
+  environment: "staging"
+
+# GitLab Publisher Configuration
+gitlab:
+  # It is recommended to use environment variables for sensitive data
+  gitlabProjectId: "${GITLAB_PROJECT_ID}" # e.g., 12345
+  gitlabPersonalAccessToken: "${GITLAB_API_TOKEN}"
+  repoBranch: "main"
+
+  # The path where the report will be saved in the GitLab repo.
+  # Available placeholders: {{date}}, {{application}}, {{runHashBundleId}}
+  gitlabUploadFolderPath: "data/test-reports/{{date}}/{{application}}/run_{{runHashBundleId}}.json"
 ```
 
-### Sample Input: Mocha JSON (mochawesome format)
+## 🔗 GitLab Integration
+
+### Overview
+
+The library includes a robust publisher for uploading the normalized report directly to a GitLab repository. This is useful for storing historical test data or feeding data into other systems.
+
+The publisher will:
+1.  Check if the report file already exists in the repository.
+2.  If it does not exist, it will create the file with a `POST` request.
+3.  If it does exist, it will update the file with a `PUT` request.
+4.  It will automatically retry the request on transient network errors (e.g., 5xx status codes).
+
+### GitLab Setup
+
+1.  **Create a Personal Access Token:**
+    *   In GitLab, go to `User Settings` -> `Access Tokens`.
+    *   Create a token with the `api` scope.
+    *   **Store this token securely!** It is recommended to save it as a masked CI/CD variable in your GitLab project (e.g., `GITLAB_API_TOKEN`).
+2.  **Get your Project ID:**
+    *   The Project ID can be found on the main page of your GitLab project, under the project name.
+
+### CI/CD Environment Variables
+
+The library will automatically gather and inject the following GitLab CI/CD variables into the report's metadata if they are available:
+
+*   `CI_PIPELINE_ID`
+*   `CI_COMMIT_SHA`
+*   `CI_PIPELINE_URL`
+
+## 📊 Supported Formats & Output Schema
+
+### Supported Input Formats
+
+The library includes built-in parsers for the following test report formats:
+
+*   **JUnit** (`.xml`)
+*   **TestNG** (`.xml`)
+*   **Cucumber** (`.json`)
+*   **Mocha** (`.json`)
+*   **Pytest** (`.json`)
+*   **Serenity** (`.json`)
+
+### The Normalized JSON Schema
+
+The final output is a single JSON object with the following structure:
 
 ```json
 {
-  "stats": {
-    "suites": 1,
-    "tests": 2,
-    "passes": 1,
-    "failures": 1,
-    "duration": 2000
-  },
-  "results": [
-    {
-      "title": "My Test Suite",
-      "tests": [
-        {
-          "title": "A passing test",
-          "duration": 1500,
-          "state": "passed"
-        },
-        {
-          "title": "A failing test",
-          "duration": 500,
-          "state": "failed",
-          "err": {
-            "message": "AssertionError: expected true to be false"
-          }
-        }
-      ]
-    }
-  ]
-}
-```
-
-### Sample Input: Pytest JSON (pytest-json-report format)
-
-```json
-{
-  "summary": {
-    "total": 3,
-    "passed": 1,
-    "failed": 1,
-    "skipped": 1
-  },
-  "tests": [
-    {
-      "nodeid": "test_app.py::test_success",
-      "outcome": "passed",
-      "call": { "duration": 0.01 }
-    },
-    {
-      "nodeid": "test_app.py::test_failure",
-      "outcome": "failed",
-      "call": { "duration": 0.01, "longrepr": "AssertionError: assert False" }
-    },
-    {
-      "nodeid": "test_app.py::test_skipped",
-      "outcome": "skipped"
-    }
-  ]
-}
-```
-
-### Sample Input: Serenity BDD JSON
-
-```json
-{
-  "name": "Login Feature",
-  "testSteps": [
-    {
-      "description": "User logs in successfully",
-      "duration": 5000,
-      "result": "SUCCESS"
-    },
-    {
-      "description": "User fails to log in",
-      "duration": 3000,
-      "result": "FAILURE",
-      "exception": {
-        "message": "Expected error message was not displayed"
-      }
-    }
-  ]
-}
-```
-
-### Final Normalized JSON Output
-
-This is an example of the final `NormalizedReportBundle` that is written to the output file and uploaded.
-
-```json
-{
-  "bundleId": "a1b2c3d4-e5f6-7890-1234-567890abcdef",
-  "schemaVersion": "1.0",
-  "createdAt": "2025-10-29T12:00:00Z",
+  "schemaVersion": "1.0.0",
+  "bundleId": "a1b2c3d4-e5f6-...",
+  "createdAt": "2025-10-30T12:00:00Z",
   "metadata": {
-    "buildId": "12345",
-    "gitCommit": "abcdef123",
-    "environment": "staging"
+    "application": "my-app",
+    "runId": "f0a1b2c3",
+    "ciPipelineId": "12345",
+    "commitHash": "abcdef123456",
+    "pipelineUrl": "...",
+    "gitBranch": "main",
+    "gitlabProjectId": "67890",
+    "published": true
   },
   "reports": [
     {
       "framework": "Cucumber",
+      "summary": {
+        "total": 10,
+        "passed": 8,
+        "failed": 1,
+        "skipped": 1,
+        "durationMs": 5000
+      },
       "suites": [
         {
-          "name": "User Login Feature",
-          "durationMs": 3000,
+          "name": "Login Feature",
+          "durationMs": 5000,
           "tests": [
             {
-              "name": "Valid login scenario",
+              "name": "Successful Login",
               "status": "PASSED",
-              "durationMs": 3000,
+              "durationMs": 2000,
               "steps": [
-                {"name": "Given user is on login page", "status": "PASSED", "durationMs": 1000},
-                {"name": "When user enters valid credentials", "status": "PASSED", "durationMs": 2000}
+                {
+                  "name": "Given I am on the login page",
+                  "status": "PASSED",
+                  "durationMs": 500
+                },
+                {
+                  "name": "When I enter valid credentials",
+                  "status": "PASSED",
+                  "durationMs": 1000
+                },
+                {
+                  "name": "Then I should be redirected to the dashboard",
+                  "status": "PASSED",
+                  "durationMs": 500
+                }
               ]
             }
           ]
         }
       ]
-    },
-    {
-      "framework": "JUnit",
-      "suites": [
-        {
-          "name": "MySuite",
-          "durationMs": 3500,
-          "tests": [
-            {"name": "testOne", "status": "PASSED", "durationMs": 1200},
-            {"name": "testTwo", "status": "FAILED", "durationMs": 2300, "errorMessage": "Assertion failed"}
-          ]
-        }
-      ]
     }
   ]
 }
 ```
+
+### Sample JSON Output
+
+*(A sample output is provided above in the schema description.)*
+
+## 🔌 Extending the Normalizer
+
+### Plugin Architecture
+
+The normalizer uses Java's `ServiceLoader` to discover and load parser implementations at runtime. This means you can easily add support for a new test report format without modifying the core library.
+
+The tool will look for plugins in two places:
+1.  On the classpath (for built-in parsers).
+2.  In a `plugins/` directory (relative to the JAR file) for external plugins.
+
+### Creating a Custom Parser
+
+To create a custom parser, you need to:
+
+1.  **Implement the `ReportParser` interface:** This interface has a single method, `parse(File file)`, which takes a report file and returns a `NormalizedReport` object.
+2.  **Register the parser:** Create a file named `com.example.normalizer.parser.ReportParser` in the `src/main/resources/META-INF/services/` directory of your plugin project. This file should contain the fully qualified class name of your new parser.
+3.  **Package as a JAR:** Package your plugin as a JAR file and place it in the `plugins/` directory.
+
+## 📝 Logging & Telemetry
+
+### Log Modes
+
+The library provides three logging modes, which can be configured via environment variables:
+
+| Mode              | Description                                        |
+| ----------------- | -------------------------------------------------- |
+| **Colored (default)** | Human-readable, colored logs for local development. |
+| **Plain**         | Plain text logs for CI/CD environments.            |
+| **JSON**          | Structured JSON logs for machine processing.       |
+
+### Environment Variables
+
+*   `NORMALIZER_JSON_LOGS=true`: Enables structured JSON logging.
+*   `NORMALIZER_COLOR_LOGS=false`: Disables colored output.
+
+## ⚖️ License
+
+This project is licensed under the terms of the **GNU General Public License v3.0**.
+
+A copy of the license is available in the `LICENSE` file.
+
+---
+Copyright (c) 2025, Siddharth Mishra <connectwithsiddharthm@gmail.com>
