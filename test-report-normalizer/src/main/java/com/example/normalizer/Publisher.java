@@ -4,6 +4,8 @@ import com.example.normalizer.config.*;
 import com.example.normalizer.publisher.GitLabPublisher;
 import com.example.normalizer.telemetry.TelemetryLogger;
 import java.io.File;
+import java.io.FileWriter;
+import java.time.LocalDateTime;
 
 public class Publisher {
 
@@ -33,6 +35,19 @@ public class Publisher {
 
             if (success) {
                 TelemetryLogger.log("🎉 Report successfully published to GitLab repository.");
+
+                // Append audit log
+                String auditFile = "publish_audit.log";
+                try (FileWriter fw = new FileWriter(auditFile, true)) {
+                    fw.write(String.format("[%s] Published %s to GitLab project %s on branch %s%n",
+                            LocalDateTime.now(),
+                            config.getOutputFile(),
+                            config.getGitlab().getGitlabProjectId(),
+                            config.getGitlab().getRepoBranch()));
+                } catch (Exception e) {
+                    TelemetryLogger.log("⚠️ Failed to write audit log: " + e.getMessage());
+                }
+
             } else {
                 TelemetryLogger.log("❌ Failed to publish report to GitLab.");
             }
