@@ -9,6 +9,11 @@ public class NormalizerConfig {
     private UploadConfig upload;
     private Map<String, String> metadata;
 
+    // ✅ New fields for publishing
+    private boolean publishOnlyOnCI;
+    private String applicationName;
+    private GitLabConfig gitlab;
+
     public String getInputDir() { return inputDir; }
     public void setInputDir(String inputDir) { this.inputDir = inputDir; }
 
@@ -20,4 +25,13 @@ public class NormalizerConfig {
 
     public Map<String, String> getMetadata() { return metadata; }
     public void setMetadata(Map<String, String> metadata) { this.metadata = metadata; }
+
+    public boolean isPublishOnlyOnCI() { return publishOnlyOnCI; }
+    public void setPublishOnlyOnCI(boolean publishOnlyOnCI) { this.publishOnlyOnCI = publishOnlyOnCI; }
+
+    public String getApplicationName() { return applicationName; }
+    public void setApplicationName(String applicationName) { this.applicationName = applicationName; }
+
+    public GitLabConfig getGitlab() { return gitlab; }
+    public void setGitlab(GitLabConfig gitlab) { this.gitlab = gitlab; }
 }

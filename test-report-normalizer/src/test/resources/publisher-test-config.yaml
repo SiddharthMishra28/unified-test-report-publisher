@@ -1,0 +1,10 @@
+inputDir: ./reports
+outputFile: ./target/test-output.json
+applicationName: "my-test-app"
+publishOnlyOnCI: true
+
+gitlab:
+  gitlabProjectId: "12345"
+  gitlabPersonalAccessToken: "test-token"
+  repoBranch: "main"
+  gitlabUploadFolderPath: "data/{{date}}/{{application}}/run_{{runHashBundleId}}.json"

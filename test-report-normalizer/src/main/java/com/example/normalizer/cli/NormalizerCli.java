@@ -1,5 +1,6 @@
 package com.example.normalizer.cli;
 
+import com.example.normalizer.Publisher;
 import com.example.normalizer.config.ConfigLoader;
 import com.example.normalizer.config.NormalizerConfig;
 import com.example.normalizer.model.NormalizedReport;
@@ -96,6 +97,9 @@ public class NormalizerCli {
         } else {
             System.out.println("Upload endpoint not configured. Skipping upload.");
         }
+
+        // Trigger GitLab publishing
+        Publisher.PublishReport(args[1]);
     }
 
     private static List<File> findReportFiles(File directory) throws IOException {
