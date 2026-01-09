@@ -1,0 +1,26 @@
+[
+  {
+    "uri": "features/my-feature.feature",
+    "id": "my-feature",
+    "keyword": "Feature",
+    "name": "My Karate Feature",
+    "elements": [
+      {
+        "id": "my-feature;my-scenario",
+        "keyword": "Scenario",
+        "name": "My Karate Scenario",
+        "type": "scenario",
+        "steps": [
+          {
+            "keyword": "Given ",
+            "name": "a step",
+            "result": {
+              "duration": 1000000,
+              "status": "passed"
+            }
+          }
+        ]
+      }
+    ]
+  }
+]

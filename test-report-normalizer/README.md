@@ -204,6 +204,8 @@ The library includes built-in parsers for the following test report formats:
 *   **Mocha** (`.json`)
 *   **Pytest** (`.json`)
 *   **Serenity** (`.json`)
+*   **Karate** (`.json`)
+*   **Allure** (`.json`)
 
 ### The Normalized JSON Schema
 
