@@ -318,3 +318,44 @@ A copy of the license is available in the `LICENSE` file.
 
 ---
 Copyright (c) 2025, Siddharth Mishra <connectwithsiddharthm@gmail.com>
+
+## 📦 Use as a Maven Dependency
+
+You can include the normalizer JAR in another Maven project and execute normalization/publishing in your own code.
+
+```xml
+<dependency>
+  <groupId>com.example</groupId>
+  <artifactId>test-report-normalizer</artifactId>
+  <version>1.0.0</version>
+</dependency>
+```
+
+### Java API usage
+
+```java
+import com.example.normalizer.NormalizerService;
+
+NormalizerService service = new NormalizerService();
+service.normalizeAndPublish(new File("normalizer-config.yaml"));
+```
+
+### YAML configuration for dashboard publishing
+
+```yaml
+applicationName: "my-microservice"
+inputDir: "./build/reports/tests"
+outputFile: "./build/normalized-report.json"
+
+# Optional: publish to dashboard endpoint
+# Normalized report JSON will be POSTed to this endpoint.
+dashboard:
+  endpoint: "https://dashboard.example.com/api/test-results"
+  timeoutSeconds: 30
+  retries: 3
+  auth:
+    type: bearer
+    token: "${DASHBOARD_TOKEN}"
+```
+
+If `dashboard.endpoint` is configured, the library publishes normalized JSON to that endpoint. GitLab publishing continues to work when `gitlab` config is also present.

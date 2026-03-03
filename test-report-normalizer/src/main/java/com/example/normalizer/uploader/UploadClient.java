@@ -1,6 +1,6 @@
 package com.example.normalizer.uploader;
 
-import com.example.normalizer.config.UploadConfig;
+import com.example.normalizer.config.DashboardConfig;
 import com.example.normalizer.model.NormalizedReportBundle;
 import com.example.normalizer.telemetry.TelemetryLogger;
 import com.fasterxml.jackson.databind.ObjectMapper;
@@ -15,11 +15,11 @@ import java.time.Duration;
 
 public class UploadClient {
 
-    private final UploadConfig config;
+    private final DashboardConfig config;
     private final HttpClient httpClient;
     private final ObjectMapper objectMapper = new ObjectMapper().registerModule(new JavaTimeModule());
 
-    public UploadClient(UploadConfig config) {
+    public UploadClient(DashboardConfig config) {
         this.config = config;
         this.httpClient = HttpClient.newBuilder()
                 .connectTimeout(Duration.ofSeconds(config.getTimeoutSeconds()))
@@ -42,7 +42,7 @@ public class UploadClient {
                         .timeout(Duration.ofSeconds(config.getTimeoutSeconds()))
                         .header("Content-Type", "application/json");
 
-                if (config.getAuth() != null && config.getAuth().get("type").equals("bearer")) {
+                if (config.getAuth() != null && "bearer".equalsIgnoreCase(config.getAuth().get("type"))) {
                     requestBuilder.header("Authorization", "Bearer " + config.getAuth().get("token"));
                 }
 

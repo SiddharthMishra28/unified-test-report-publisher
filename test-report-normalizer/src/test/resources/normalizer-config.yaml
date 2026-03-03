@@ -1,10 +1,11 @@
 inputDir: ./reports
 outputFile: ./output/normalized.json
 
-upload:
+dashboard:
   endpoint: https://qa-dashboard.company.com/api/ingest
-  authType: BEARER
-  token: ${UPLOAD_TOKEN}
+  auth:
+    type: bearer
+    token: ${UPLOAD_TOKEN}
 
 metadata:
   buildId: ${CI_PIPELINE_ID}
