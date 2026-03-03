@@ -1,6 +1,6 @@
 package com.example.normalizer.uploader;
 
-import com.example.normalizer.config.UploadConfig;
+import com.example.normalizer.config.DashboardConfig;
 import com.example.normalizer.model.NormalizedReportBundle;
 import com.sun.net.httpserver.HttpExchange;
 import com.sun.net.httpserver.HttpHandler;
@@ -11,7 +11,6 @@ import org.junit.jupiter.api.Test;
 
 import java.io.IOException;
 import java.net.InetSocketAddress;
-import java.util.Collections;
 import java.util.Map;
 import java.util.concurrent.Executors;
 
@@ -39,7 +38,7 @@ public class UploadClientTest {
 
     @Test
     public void testUploadWithBearerToken() {
-        UploadConfig config = new UploadConfig();
+        DashboardConfig config = new DashboardConfig();
         config.setEndpoint("http://localhost:" + server.getAddress().getPort() + "/api/ingest");
         config.setAuth(Map.of("type", "bearer", "token", "my-token"));
 
@@ -54,7 +53,7 @@ public class UploadClientTest {
 
     @Test
     public void testUploadSuccess() {
-        UploadConfig config = new UploadConfig();
+        DashboardConfig config = new DashboardConfig();
         config.setEndpoint("http://localhost:" + server.getAddress().getPort() + "/api/ingest");
 
         UploadClient client = new UploadClient(config);

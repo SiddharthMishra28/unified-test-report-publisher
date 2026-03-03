@@ -11,8 +11,14 @@ public class ConfigLoader {
         NormalizerConfig config = mapper.readValue(file, NormalizerConfig.class);
 
         // Environment variable substitution
-        if (config.getUpload() != null && config.getUpload().getToken() != null) {
-            config.getUpload().setToken(substituteVariables(config.getUpload().getToken()));
+        if (config.getDashboard() != null && config.getDashboard().getAuth() != null) {
+            config.getDashboard().getAuth().replaceAll((k, v) -> substituteVariables(v));
+        }
+        if (config.getGitlab() != null) {
+            config.getGitlab().setGitlabProjectId(substituteVariables(config.getGitlab().getGitlabProjectId()));
+            config.getGitlab().setGitlabPersonalAccessToken(substituteVariables(config.getGitlab().getGitlabPersonalAccessToken()));
+            config.getGitlab().setRepoBranch(substituteVariables(config.getGitlab().getRepoBranch()));
+            config.getGitlab().setGitlabUploadFolderPath(substituteVariables(config.getGitlab().getGitlabUploadFolderPath()));
         }
         if (config.getMetadata() != null) {
             config.getMetadata().replaceAll((k, v) -> substituteVariables(v));

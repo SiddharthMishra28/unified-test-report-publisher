@@ -2,8 +2,17 @@ applicationName: "my-test-app"
 inputDir: "test-reports"
 outputFile: "normalized-report.json"
 publishOnlyOnCI: false
+
+dashboard:
+  endpoint: "https://dashboard.example.com/api/test-results"
+  timeoutSeconds: 30
+  retries: 2
+  auth:
+    type: "bearer"
+    token: "${DASHBOARD_TOKEN}"
+
 gitlab:
   gitlabProjectId: "12345"
-  gitlabPersonalAccessToken: "your-token"
+  gitlabPersonalAccessToken: "${GITLAB_TOKEN}"
   repoBranch: "main"
   gitlabUploadFolderPath: "data/{{date}}/{{application}}/run_{{runHashBundleId}}.json"

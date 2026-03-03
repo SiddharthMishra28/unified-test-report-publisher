@@ -18,9 +18,9 @@ public class ConfigLoaderTest {
 
         assertEquals("./reports", config.getInputDir());
         assertEquals("./output/normalized.json", config.getOutputFile());
-        assertEquals("https://qa-dashboard.company.com/api/ingest", config.getUpload().getEndpoint());
-        assertEquals("BEARER", config.getUpload().getAuthType().toString());
-        assertEquals("my-secret-token", config.getUpload().getToken());
+        assertEquals("https://qa-dashboard.company.com/api/ingest", config.getDashboard().getEndpoint());
+        assertEquals("BEARER", config.getDashboard().getAuth().get("type").toUpperCase());
+        assertEquals("my-secret-token", config.getDashboard().getAuth().get("token"));
         assertEquals("12345", config.getMetadata().get("buildId"));
         assertEquals("abcdef123", config.getMetadata().get("gitCommit"));
         assertEquals("staging", config.getMetadata().get("environment"));
